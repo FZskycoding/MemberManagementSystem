@@ -1,19 +1,6 @@
 ﻿@model IEnumerable<MemberManagementSystem.Models.User>
 
 <h2>使用者列表</h2>
-@if (TempData["Register_Message"] != null)
-{
-    <div class="alert alert-success">
-        @TempData["Register_Message"]
-    </div>
-}
-
-@if (TempData["Login_Message"] != null)
-{
-    <div class="alert alert-success">
-        @TempData["Login_Message"]
-    </div>
-}
 
 <table class="table">
     <thead>

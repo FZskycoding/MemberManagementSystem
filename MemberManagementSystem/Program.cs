@@ -4,6 +4,14 @@ using MemberManagementSystem.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+// 新增：加入 Session 支援
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Session 有效時間
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
@@ -22,6 +30,8 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+// 新增：啟用 Session 中介軟體
+app.UseSession();
 
 app.UseHttpsRedirection();
 app.UseRouting();
@@ -37,3 +47,4 @@ app.MapControllerRoute(
 
 
 app.Run();
+

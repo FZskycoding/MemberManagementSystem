@@ -30,8 +30,9 @@
                 </div>
 
                 <div class="float-right">
-                    @if (TempData["Login_Message"] != null)
+                    @if (Context.Session.GetString("LoginUser") != null)
                     {
+                        <text>歡迎 @Context.Session.GetString("LoginUser")</text>
                         <a asp-controller="User" asp-action="Logout">登出</a>
                     }
                     else

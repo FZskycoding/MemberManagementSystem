@@ -44,7 +44,6 @@ namespace MemberManagementSystem.Controllers
                 Name = model.Name,
                 Email = model.Email,
                 Password = model.Password,
-
             };
             _userRepository.Add(user);
             _userRepository.Save();
@@ -75,8 +74,9 @@ namespace MemberManagementSystem.Controllers
                 ModelState.AddModelError(string.Empty, "Email或密碼錯誤");
                 return View(model);
             }
+            HttpContext.Session.SetString("LoginUser", user.Name); // 或是 Email 等等
 
-            TempData["Login_Message"] = $"歡迎{user.Name}登入!";
+            // TempData["Login_Message"] = $"歡迎{user.Name}登入!";
             return RedirectToAction("Index");
         }
 
@@ -84,7 +84,9 @@ namespace MemberManagementSystem.Controllers
         public IActionResult Logout()
         {
             // 清除登入狀態（這裡使用 TempData 模擬登入狀態，實際專案會用 Session 或 Identity）
-            TempData.Remove("Message");
+            // TempData.Remove("Message");
+            HttpContext.Session.Remove("LoginUser");
+
             return RedirectToAction("Login");
         }
     }
