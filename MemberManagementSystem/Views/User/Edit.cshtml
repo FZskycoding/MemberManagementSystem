@@ -3,23 +3,21 @@
 <h2>編輯使用者</h2>
 
 <form asp-action="Edit">
+    @* 目前先不更改Email、Id *@
     <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="Email" />
 
     <div class="form-group">
         <label asp-for="Name"></label>
         <input asp-for="Name" class="form-control" />
         <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
 
-    @* 目前先不更改Email *@
-
-    <div class="form-group"></div>
         <label asp-for="Password"></label>
         <input asp-for="Password" class="form-control" />
         <span asp-validation-for="Password" class="text-danger"></span>
-        <button type="submit" class="btn btn-primary">儲存</button>
-        <a asp-action="Index" class="btn btn-secondary">取消</a>
-    </div>
 
-    
+        <button type="submit" class="btn btn-primary">儲存</button>
+        <button asp-action="Index" class="btn btn-secondary">取消</button>
+    </div>    
 </form>
+

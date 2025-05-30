@@ -109,6 +109,7 @@ namespace MemberManagementSystem.Controllers
             {
                 return RedirectToAction("Index", "Home"); // 或者 RedirectToAction("Index")
             }
+            Console.WriteLine(user.Email);
 
             return View(user);
         }
@@ -117,9 +118,11 @@ namespace MemberManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(User user)
         {
+            Console.WriteLine(user.Email);
             string? LoginEmail = HttpContext.Session.GetString("LoginEmail");
             if (LoginEmail == null || user.Email != LoginEmail)
             {
+                Console.WriteLine("Edit 2 wrong");
                 return RedirectToAction("Index", "Home");
             }
 
