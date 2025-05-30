@@ -5,11 +5,15 @@
 }
 
 <h2>使用者列表</h2>
+<form asp-action="Index" method="get" class="mb-3">
+    <input type="text" name="search" value="@ViewContext.HttpContext.Request.Query["search"]" placeholder="輸入名稱或 Email 查詢" class="form-control" />
+    <button type="submit" class="btn btn-primary mt-2">搜尋</button>
+</form>
 
 <table class="table">
     <thead>
         <tr>
-            <th>姓名</th>
+            <th>使用者名稱</th>
             <th>Email</th>
             <th>操作</th>
         </tr>

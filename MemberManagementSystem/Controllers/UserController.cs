@@ -14,9 +14,16 @@ namespace MemberManagementSystem.Controllers
             _userRepository = userRepository;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string search)
         {
             var users = _userRepository.GetAll();  // 呼叫 Repository 拿使用者清單
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                users = users.Where(u =>
+                u.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                u.Email.Contains(search, StringComparison.OrdinalIgnoreCase));
+            }
             return View(users);  // 將 users 傳到 View 顯示
         }
 
@@ -36,6 +43,22 @@ namespace MemberManagementSystem.Controllers
             if (!ModelState.IsValid)
             {
                 return View(model);// 驗證失敗，回到註冊畫面
+            }
+
+            //檢查 Email 是否已被註冊
+            var existingEmailUser = _userRepository.GetByEmail(model.Email);
+            if (existingEmailUser != null)
+            {
+                ModelState.AddModelError("Email", "這個 Email 已經被使用");
+                return View(model);
+            }
+
+            //檢查使用者名稱是否已存在
+            var allUsers = _userRepository.GetAll();
+            if (allUsers.Any(u => u.Name == model.Name))
+            {
+                ModelState.AddModelError("Name", "這個使用者名稱已經被使用");
+                return View(model);
             }
 
             //建立新的User 
@@ -109,7 +132,6 @@ namespace MemberManagementSystem.Controllers
             {
                 return RedirectToAction("Index", "Home"); // 或者 RedirectToAction("Index")
             }
-            Console.WriteLine(user.Email);
 
             return View(user);
         }
@@ -118,11 +140,9 @@ namespace MemberManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(User user)
         {
-            Console.WriteLine(user.Email);
             string? LoginEmail = HttpContext.Session.GetString("LoginEmail");
             if (LoginEmail == null || user.Email != LoginEmail)
             {
-                Console.WriteLine("Edit 2 wrong");
                 return RedirectToAction("Index", "Home");
             }
 
