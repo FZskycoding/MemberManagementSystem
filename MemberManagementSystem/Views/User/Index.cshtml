@@ -1,0 +1,35 @@
+﻿@model IEnumerable<MemberManagementSystem.Models.User>
+
+<h2>使用者列表</h2>
+@if (TempData["Register_Message"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Register_Message"]
+    </div>
+}
+
+@if (TempData["Login_Message"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Login_Message"]
+    </div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>姓名</th>
+            <th>Email</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.Name</td>
+                <td>@user.Email</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
