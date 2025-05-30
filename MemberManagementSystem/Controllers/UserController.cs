@@ -69,12 +69,13 @@ namespace MemberManagementSystem.Controllers
             }
 
             var user = _userRepository.GetByEmail(model.Email);
-            if(user == null || user.Password != model.Password)
+            if (user == null || user.Password != model.Password)
             {
                 ModelState.AddModelError(string.Empty, "Email或密碼錯誤");
                 return View(model);
             }
-            HttpContext.Session.SetString("LoginUser", user.Name); // 或是 Email 等等
+            HttpContext.Session.SetString("LoginName", user.Name);
+            HttpContext.Session.SetString("LoginEmail", user.Email);
 
             // TempData["Login_Message"] = $"歡迎{user.Name}登入!";
             return RedirectToAction("Index");
@@ -85,9 +86,100 @@ namespace MemberManagementSystem.Controllers
         {
             // 清除登入狀態（這裡使用 TempData 模擬登入狀態，實際專案會用 Session 或 Identity）
             // TempData.Remove("Message");
-            HttpContext.Session.Remove("LoginUser");
+            HttpContext.Session.Remove("LoginName");
+            HttpContext.Session.Remove("LoginEmail");
 
             return RedirectToAction("Login");
         }
+        
+        //編輯使用者
+        public IActionResult Edit(int id)
+        {
+            var user = _userRepository.GetById(id);
+            
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            // 確認登入使用者是否為該帳號本人
+            string? LoginEmail = HttpContext.Session.GetString("LoginEmail");
+
+            if (LoginEmail == null || user.Email != LoginEmail)
+            {
+                return RedirectToAction("Index", "Home"); // 或者 RedirectToAction("Index")
+            }
+
+            return View(user);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(User user)
+        {
+            string? LoginEmail = HttpContext.Session.GetString("LoginEmail");
+            if (LoginEmail == null || user.Email != LoginEmail)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(user);
+            }
+
+            _userRepository.Update(user);
+            _userRepository.Save();
+            HttpContext.Session.SetString("LoginName", user.Name);
+
+            return RedirectToAction("Index");
+        }
+
+
+        //刪除使用者
+        public IActionResult Delete(int id)
+        {
+            var user = _userRepository.GetById(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            string? LoginEmail = HttpContext.Session.GetString("LoginEmail");
+            if (LoginEmail == null || user.Email != LoginEmail)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            return View(user);
+        }
+
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            var user = _userRepository.GetById(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            string? LoginEmail = HttpContext.Session.GetString("LoginEmail");
+            if (LoginEmail == null || user.Email != LoginEmail)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            _userRepository.Delete(id);
+            _userRepository.Save();
+
+            // 避免刪除後還保留登入狀態，可考慮清除 Session
+            HttpContext.Session.Clear();
+
+            return RedirectToAction("Index");
+        }
+
     }
 }

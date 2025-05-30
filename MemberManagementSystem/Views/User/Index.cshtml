@@ -1,4 +1,8 @@
 ﻿@model IEnumerable<MemberManagementSystem.Models.User>
+@using Microsoft.AspNetCore.Http
+@{
+    var LoginEmail = Context.Session.GetString("LoginEmail");
+}
 
 <h2>使用者列表</h2>
 
@@ -7,6 +11,7 @@
         <tr>
             <th>姓名</th>
             <th>Email</th>
+            <th>操作</th>
         </tr>
     </thead>
     <tbody>
@@ -15,6 +20,13 @@
             <tr>
                 <td>@user.Name</td>
                 <td>@user.Email</td>
+                <td>
+                    @if(user.Email == LoginEmail)
+                    {
+                        <a asp-action="Edit" asp-route-id="@user.Id">編輯</a> 
+                        <a asp-action="Delete" asp-route-id="@user.Id">刪除</a>
+                    }
+                </td>
             </tr>
         }
     </tbody>

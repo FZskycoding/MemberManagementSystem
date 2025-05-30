@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var LoginName = Context.Session.GetString("LoginName");
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -30,9 +34,9 @@
                 </div>
 
                 <div class="float-right">
-                    @if (Context.Session.GetString("LoginUser") != null)
+                    @if (Context.Session.GetString("LoginName") != null)
                     {
-                        <text>歡迎 @Context.Session.GetString("LoginUser")</text>
+                        <span>歡迎， @LoginName!</span>
                         <a asp-controller="User" asp-action="Logout">登出</a>
                     }
                     else
